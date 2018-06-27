@@ -33,6 +33,7 @@ namespace smoothie_shack
             services.AddMvc();
             services.AddTransient<IDbConnection>(x => CreateDBContext());
             services.AddTransient<SmoothieRepository>();
+            services.AddTransient<UserRepository>();
         }
         private IDbConnection CreateDBContext()
         {
