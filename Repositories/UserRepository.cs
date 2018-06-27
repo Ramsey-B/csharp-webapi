@@ -3,6 +3,7 @@ using System.Data;
 using Dapper;
 using smoothie_shack.Models;
 using BCrypt.Net;
+using System.Linq;
 
 namespace smoothie_shack.Repositories
 {
@@ -17,39 +18,57 @@ namespace smoothie_shack.Repositories
 
     public User Register(UserRegistration creds)
     {
-      try 
+      try
       {
         var sql = @"
       INSERT INTO users (id, name, email, password)
       VALUES (@Id, @Name, @Email, @Password);
       SELECT LAST_INSERT_ID();";
 
-      string id = Guid.NewGuid().ToString();
+        string id = Guid.NewGuid().ToString();
 
-      creds.Password = BCrypt.Net.BCrypt.HashPassword(creds.Password, 12);
+        creds.Password = BCrypt.Net.BCrypt.HashPassword(creds.Password, 12);
 
-      _db.ExecuteScalar<string>(sql, new{
-        Id = id,
-        Name = creds.Name,
-        Email = creds.Email,
-        Password = creds.Password
-      });
+        _db.ExecuteScalar<string>(sql, new
+        {
+          Id = id,
+          Name = creds.Name,
+          Email = creds.Email,
+          Password = creds.Password
+        });
 
-      // if(newUserId != id)
-      // {
-      //   return null;
-      // }
-
-      return new User()
+        return new User()
+        {
+          Id = id,
+          Name = creds.Name,
+          Email = creds.Email,
+        };
+      }
+      catch (Exception e)
       {
-        Id = id,
-        Name = creds.Name,
-        Email = creds.Email,
-      };
-      } catch( Exception e) {
         System.Console.WriteLine(e.Message);
         return null;
       }
+    }
+    public User Login(UserLogin creds)
+    {
+      User user = GetUserByEmail(creds.Email);
+      if (user == null) { return null; }
+      if (BCrypt.Net.BCrypt.Verify(creds.Password, user.Password))
+      {
+        return user;
+      }
+      return null;
+    }
+
+    public User GetUserById(string id)
+    {
+      return _db.Query<User>("SELECT * FROM users WHERE id = @id", new { id }).FirstOrDefault();
+    }
+
+    public User GetUserByEmail(string email)
+    {
+      return _db.Query<User>("SELECT * FROM users WHERE email = @email", new { email }).FirstOrDefault();
     }
   }
 }
