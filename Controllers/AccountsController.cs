@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using smoothie_shack.Models;
 using smoothie_shack.Repositories;
@@ -14,6 +15,20 @@ namespace smoothie_shack.Controllers
     {
         _repo = repo;
     }
+
+    [HttpGet("login")]
+    public IActionResult Login()
+    {
+      return View();
+    }
+    
+    [Authorize]
+    [HttpGet]
+    public IActionResult AccountDetails()
+    {
+      return View(Authenticate());
+    }
+
 
     [HttpPost("register")]
     public async Task<User> Register([FromBody]UserRegistration creds) 
@@ -30,7 +45,7 @@ namespace smoothie_shack.Controllers
     }
 
     [HttpPost("login")]
-    public async User Login([FromBody]UserLogin creds) 
+    public async Task<User> Login([FromBody]UserLogin creds) 
     {
       if(ModelState.IsValid) 
       {
@@ -43,7 +58,8 @@ namespace smoothie_shack.Controllers
       return null;
     }
 
-    [HttpGet]
+    [Authorize]
+    [HttpGet("authenticate")]
     public User Authenticate()
     {
       var user = HttpContext.User;

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
+<body class="container">
+    <h4>AccountLogin</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <h1>LOGIN</h1>
+            <form onsubmit="login(event)">
+                <div class="form-group">
+                    <label class="control-label">Email:</label>
+                    <input class="form-control" name="email" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Password:</label>
+                    <input class="form-control" name="password" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <h1>Register</h1>
+            <form onsubmit="register(event)">
+                <div class="form-group">
+                    <label class="control-label">Username:</label>
+                    <input class="form-control" name="username" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Email:</label>
+                    <input class="form-control" name="email" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Password:</label>
+                    <input class="form-control" name="password" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+    <script>
+        let SERVER = axios.create({
+            baseURL: '/',
+            timeout: 5000,
+            withCredentials: true
+        })
+
+        function login(e) {
+            e.preventDefault();
+            SERVER.post('/account/login', {
+                email: e.target.email.value,
+                password: e.target.password.value
+            }).then(res => {
+                console.log(res)
+            })
+        }
+
+        function register(e) {
+            e.preventDefault();
+            SERVER.post('/account/register', {
+                email: e.target.email.value,
+                password: e.target.password.value,
+                username: e.target.username.value
+            }).then(res => {
+                console.log(res)
+            })
+        }
+    </script>
+</body>
+</html>
