@@ -4,7 +4,7 @@ using smoothie_shack.Interfaces;
 
 namespace smoothie_shack.Models
 {
-  public class Smoothie : IPurchasable
+  public class Sandwhich : IPurchasable
   {
     public int Id {get; set;}
     [Required]
